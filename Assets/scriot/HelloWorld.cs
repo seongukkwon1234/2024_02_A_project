@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class HelloWorld : MonoBehaviour
 {  
+public Transform Move;
+
     void Start()
     {
         Debug.Log("Hello World");
