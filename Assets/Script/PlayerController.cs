@@ -9,9 +9,10 @@ public class PlayerController : MonoBehaviour
     [Header("Player Movement")]
     public float moveSpeed = 5.0f;     //이동속도
     public float jumpForce = 5.0f;     //점프 힘
+    public float rotationSpeed = 10.0f;   //회전 스피디
 
     [Header("Camera Settings")]
-    public Camera fristPersonCamera;
+    public Camera firstPersonCamera;
     public Camera thirdPersonCamera;
     public float mouseSenesitivity = 2.0f;
 
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour
     private float targetVerticalRotation = 0;
     private float verticalRotationspeed = 240f;
 
-    private bool isFristPerson = true;
+    public bool isFristPerson = true;
     private bool isGrounded;          //플레이이가 땅에 있는지 여부
     private Rigidbody rb;            //플레이어의 RigidBody
     
@@ -54,23 +55,45 @@ public class PlayerController : MonoBehaviour
         targetVerticalRotation = Mathf.Clamp(targetVerticalRotation, yMinLimit, yMaxLimit); //수직 회전 제한
         phi = Mathf.MoveTowards(phi, targetVerticalRotation, verticalRotationspeed * Time.deltaTime);
 
-        //플레이어 회전(케릭터가 수평으로만 회전)
-        transform.rotation = Quaternion.Euler(0.0f, theta, 0.0f);
+        
 
-        fristPersonCamera.transform.localRotation = Quaternion.Euler(phi, 0.0f, 0.0f);   //1인칭 카메라 수직 회전
+        if(isFristPerson)
+        {
+            firstPersonCamera.transform.localRotation = Quaternion.Euler(phi, 0.0f, 0.0f);
+
+            transform.rotation = Quaternion.Euler(0.0f, theta, 0.0f);
+        }
+        else
+        {
+            float x = radius * Mathf.Sin(Mathf.Deg2Rad * phi) * Mathf.Cos(Mathf.Deg2Rad * theta);
+            float y = radius * Mathf.Cos(Mathf.Deg2Rad * phi);
+            float z = radius * Mathf.Sin(Mathf.Deg2Rad * phi) * Mathf.Sin(Mathf.Deg2Rad * theta);
+
+            thirdPersonCamera.transform.position = transform.position + new Vector3(x, y, z);
+            thirdPersonCamera.transform.LookAt(transform);
+
+            radius = Mathf.Clamp(radius - Input.GetAxis("Mouse ScrollWheel") * 5, minRadius, maxRadius);
+        }
+
+       
 
     }
     void Update()
     {
         HandleJump();
-        HandleMovement();
+        
         HandleRotation();
         HandleCameraToggle();
     }
 
+    void FixedUpdate()
+    {
+        HandleMovement();
+    }
+
     void SetActiveCamera()
     {
-        fristPersonCamera.gameObject.SetActive(isFristPerson);
+        firstPersonCamera.gameObject.SetActive(isFristPerson);
         thirdPersonCamera.gameObject.SetActive(!isFristPerson);
     }
 
@@ -78,11 +101,12 @@ public class PlayerController : MonoBehaviour
 
     void SetupCameras()
     {
-        fristPersonCamera.transform.localPosition = new Vector3(0.0f, 0.6f, 0.0f);  //1인칭 카메라 위치
-        fristPersonCamera.transform.localRotation = Quaternion.identity;     //1인칭 카메라 회전 초기화
+        firstPersonCamera.transform.localPosition = new Vector3(0.0f, 0.6f, 0.0f);  //1인칭 카메라 위치
+        firstPersonCamera.transform.localRotation = Quaternion.identity;     //1인칭 카메라 회전 초기화
 
         
     }
+
     //플레이어 점프를 처리하는 함수
     void HandleJump()
     {
@@ -119,7 +143,7 @@ public class PlayerController : MonoBehaviour
         float moveHorizonal = Input.GetAxis("Horizontal");    //좌우 입력(-1 ~ 1)
         float moveVertical = Input.GetAxis("Vertical");       //앞뒤 입력(1 ~ -1)
 
-        
+        Vector3 movement;
 
         if(!isFristPerson)
         {
@@ -131,14 +155,22 @@ public class PlayerController : MonoBehaviour
             cameraRight.y = 0.0f;
             cameraRight.Normalize();
 
-            Vector3 movement = cameraRight * moveHorizonal + cameraForward * moveVertical;
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
+            movement = cameraRight * moveHorizonal + cameraForward * moveVertical;
+           
         }
         else
         {
-            Vector3 movement = transform.right * moveHorizonal + transform.forward * moveHorizonal;
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
+            movement = transform.right * moveHorizonal + transform.forward * moveVertical;
+            
         }
+
+        if(movement.magnitude > 0.1f)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        }
+
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
     }
 
 
