@@ -29,9 +29,15 @@ public class PlayerController : MonoBehaviour
     private float verticalRotationspeed = 240f;
 
     public bool isFristPerson = true;
-    private bool isGrounded;          //플레이이가 땅에 있는지 여부
+   //private bool isGrounded;          //플레이이가 땅에 있는지 여부
     private Rigidbody rb;            //플레이어의 RigidBody
-    
+
+    public float fallingThreshold = -0.1f;
+
+    [Header("Ground Check Setting")]
+    public float groundCheckDistanse = 0.3f;
+    public float slopedLimit = 45f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();   //리지드 바디 컴포넌트를 가져온다.
@@ -80,10 +86,13 @@ public class PlayerController : MonoBehaviour
     }
     void Update()
     {
-        HandleJump();
-        
         HandleRotation();
         HandleCameraToggle();
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            HandleJump();
+        }
     }
 
     void FixedUpdate()
@@ -108,28 +117,12 @@ public class PlayerController : MonoBehaviour
     }
 
     //플레이어 점프를 처리하는 함수
-    void HandleJump()
+    public void HandleJump()
     {
-        //점프 버튼을 누르고 땅에 있을때
-        if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);    //위쪽으로 힘을 가해 점프
-            isGrounded = false;
-        }
-        else
-        {
-            float x = radius * Mathf.Sin(Mathf.Deg2Rad * phi) * Mathf.Cos(Mathf.Deg2Rad * theta);
-            float y = radius * Mathf.Cos(Mathf.Deg2Rad * phi);
-            float z = radius * Mathf.Sin(Mathf.Deg2Rad * phi) * Mathf.Sin(Mathf.Deg2Rad * theta);
-
-            thirdPersonCamera.transform.position = transform.position + new Vector3(x, y, z);
-            thirdPersonCamera.transform.LookAt(transform);
-
-            radius = Mathf.Clamp(radius - Input.GetAxis("Mouse ScrollWheel") * 5, minRadius, maxRadius);
-        }
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);           
     }
 
-    void HandleCameraToggle()
+   public void HandleCameraToggle()
     {
         if(Input.GetKeyDown(KeyCode.C))
         {
@@ -172,10 +165,19 @@ public class PlayerController : MonoBehaviour
 
         rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
     }
-
-
-    private void OnCollisionStay(Collision collision)
+ 
+    public bool isGrounded()
     {
-        isGrounded = true;              //충돌 중이면 플레이어는 땅에 있다
+        return Physics.Raycast(transform.position, Vector3.down, 2.0f);
+    }
+
+    public bool isFalling()
+    {
+        return rb.velocity.y < fallingThreshold && !isGrounded();
+    }
+
+    public float GetVerticalVelocity()
+    {
+        return rb. velocity.y;
     }
 }

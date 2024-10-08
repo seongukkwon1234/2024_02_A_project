@@ -203,6 +203,7 @@ GameObject:
   - component: {fileID: 701881601}
   - component: {fileID: 701881600}
   - component: {fileID: 701881599}
+  - component: {fileID: 701881605}
   m_Layer: 0
   m_Name: CexKing
   m_TagString: Untagged
@@ -234,6 +235,9 @@ MonoBehaviour:
   yMinLimit: -90
   yMaxLimit: 90
   isFristPerson: 1
+  fallingThreshold: -0.1
+  groundCheckDistanse: 0.3
+  slopedLimit: 45
 --- !u!54 &701881600
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -352,6 +356,19 @@ Transform:
   - {fileID: 2118095449}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &701881605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701881598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d02cb66c043831438204efbadfba9dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 0}
 --- !u!1 &860043772
 GameObject:
   m_ObjectHideFlags: 0
