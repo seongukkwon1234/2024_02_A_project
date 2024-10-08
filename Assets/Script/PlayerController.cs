@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    //플레이어의 움직임 속도를 설정하는 변수
+
     [Header("Player Movement")]
     public float moveSpeed = 5.0f;     //이동속도
     public float jumpForce = 5.0f;     //점프 힘
@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     public float maxRadius = 10.0f;
 
     public float yMinLimit = -90;
-    public float yMaxLimit = 90;    
+    public float yMaxLimit = 90;
 
     private float theta = 0.0f;
     private float phi = 0.0f;
@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     private float verticalRotationspeed = 240f;
 
     public bool isFristPerson = true;
-   //private bool isGrounded;          //플레이이가 땅에 있는지 여부
+    //private bool isGrounded;          //플레이이가 땅에 있는지 여부
     private Rigidbody rb;            //플레이어의 RigidBody
 
     public float fallingThreshold = -0.1f;
@@ -61,9 +61,9 @@ public class PlayerController : MonoBehaviour
         targetVerticalRotation = Mathf.Clamp(targetVerticalRotation, yMinLimit, yMaxLimit); //수직 회전 제한
         phi = Mathf.MoveTowards(phi, targetVerticalRotation, verticalRotationspeed * Time.deltaTime);
 
-        
 
-        if(isFristPerson)
+
+        if (isFristPerson)
         {
             firstPersonCamera.transform.localRotation = Quaternion.Euler(phi, 0.0f, 0.0f);
 
@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
             radius = Mathf.Clamp(radius - Input.GetAxis("Mouse ScrollWheel") * 5, minRadius, maxRadius);
         }
 
-       
+
 
     }
     void Update()
@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
         HandleRotation();
         HandleCameraToggle();
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             HandleJump();
         }
@@ -113,32 +113,32 @@ public class PlayerController : MonoBehaviour
         firstPersonCamera.transform.localPosition = new Vector3(0.0f, 0.6f, 0.0f);  //1인칭 카메라 위치
         firstPersonCamera.transform.localRotation = Quaternion.identity;     //1인칭 카메라 회전 초기화
 
-        
+
     }
 
     //플레이어 점프를 처리하는 함수
     public void HandleJump()
     {
-        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);           
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 
-   public void HandleCameraToggle()
+    public void HandleCameraToggle()
     {
-        if(Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             isFristPerson = !isFristPerson;
             SetActiveCamera();
         }
     }
     //플레이어의 이동을 처리하는 함수
-     void HandleMovement()
+    public void HandleMovement()
     {
         float moveHorizonal = Input.GetAxis("Horizontal");    //좌우 입력(-1 ~ 1)
         float moveVertical = Input.GetAxis("Vertical");       //앞뒤 입력(1 ~ -1)
 
         Vector3 movement;
 
-        if(!isFristPerson)
+        if (!isFristPerson)
         {
             Vector3 cameraForward = thirdPersonCamera.transform.forward;
             cameraForward.y = 0.0f;
@@ -149,15 +149,15 @@ public class PlayerController : MonoBehaviour
             cameraRight.Normalize();
 
             movement = cameraRight * moveHorizonal + cameraForward * moveVertical;
-           
+
         }
         else
         {
             movement = transform.right * moveHorizonal + transform.forward * moveVertical;
-            
+
         }
 
-        if(movement.magnitude > 0.1f)
+        if (movement.magnitude > 0.1f)
         {
             Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
@@ -165,7 +165,7 @@ public class PlayerController : MonoBehaviour
 
         rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
     }
- 
+
     public bool isGrounded()
     {
         return Physics.Raycast(transform.position, Vector3.down, 2.0f);
@@ -178,6 +178,6 @@ public class PlayerController : MonoBehaviour
 
     public float GetVerticalVelocity()
     {
-        return rb. velocity.y;
+        return rb.velocity.y;
     }
 }

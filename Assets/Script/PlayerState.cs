@@ -7,16 +7,12 @@ public abstract class PlayerState
     protected PlayerStateMachine stateMachine;
     protected PlayerController playerController;
 
-
-    
     public PlayerState(PlayerStateMachine stateMachine)
     {
         this.stateMachine = stateMachine;
-        this.playerController = stateMachine.PlayerController;
-
+        this.playerController = stateMachine.playerController;
     }
 
-        
     public virtual void Enter() { }
 
     public virtual void Exit() { }
@@ -24,7 +20,11 @@ public abstract class PlayerState
     public virtual void Update() { }
 
     public virtual void FixedUpdate() { }
-   
+
+    protected void CheckTransitions()
+    {
+
+    }
 
     public class IdleState : PlayerState
     {
@@ -34,9 +34,7 @@ public abstract class PlayerState
         {
             CheckTransitions();
         }
-
     }
-
     public class MoveingState : PlayerState
     {
         public MoveingState(PlayerStateMachine stateMachine) : base(stateMachine) { }
@@ -50,8 +48,8 @@ public abstract class PlayerState
         {
             playerController.HandleMovement();
         }
-
     }
+
     public class JumpingState : PlayerState
     {
         public JumpingState(PlayerStateMachine stateMachine) : base(stateMachine) { }
@@ -66,7 +64,6 @@ public abstract class PlayerState
             playerController.HandleMovement();
         }
     }
-
     public class FallingState : PlayerState
     {
         public FallingState(PlayerStateMachine stateMachine) : base(stateMachine) { }
@@ -76,9 +73,13 @@ public abstract class PlayerState
             CheckTransitions();
         }
 
-
+        public override void FixedUpdate()
+        {
+            playerController.HandleMovement();
+        }
     }
-    protected void CheckTransitions()
+
+    protected void CheckTrasnsitions()
     {
         if (playerController.isGrounded())
         {
@@ -86,9 +87,10 @@ public abstract class PlayerState
             {
                 stateMachine.TransitionToState(new JumpingState(stateMachine));
             }
-            else if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("vertical")! = 0)
+
+            else if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
             {
-                stateMachine.TrasnitionToState(new MoveingState(stateMachine));
+                stateMachine.TransitionToState(new MoveingState(stateMachine));
             }
             else
             {
@@ -97,7 +99,7 @@ public abstract class PlayerState
         }
         else
         {
-            if (playerController.GetVerticalVelocity() > 0)
+            if(playerController.GetVerticalVelocity() > 0)
             {
                 stateMachine.TransitionToState(new JumpingState(stateMachine));
             }
@@ -106,7 +108,7 @@ public abstract class PlayerState
                 stateMachine.TransitionToState(new FallingState(stateMachine));
             }
         }
+        
     }
-
-
+    
 }

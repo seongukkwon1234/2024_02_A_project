@@ -6,14 +6,11 @@ using static PlayerState;
 public class PlayerStateMachine : MonoBehaviour
 {
     public PlayerState currentState;
-
     public PlayerController playerController;
 
-
-   
-    private void Awawke()
+    private void Awake()
     {
-        playerController = Getcompoenet<PlayerController>();
+        playerController = GetComponent<PlayerController>();
     }
 
     void Start()
@@ -23,15 +20,15 @@ public class PlayerStateMachine : MonoBehaviour
 
     void Update()
     {
-        if (currentState != null)
+        if (currentState! != null)
         {
             currentState.Update();
         }
     }
 
-    public void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (currnetState != null)
+        if(currentState != null)
         {
             currentState.FixedUpdate();
         }
@@ -40,11 +37,9 @@ public class PlayerStateMachine : MonoBehaviour
     public void TransitionToState(PlayerState newState)
     {
         currentState?.Exit();
-
         currentState = newState;
-
         currentState.Enter();
-
-        Debug.Log($"Transitioned to State {newState.GetType()}");
+        Debug.Log($"Transitioned to State{newState.GetType().Name}");
     }
+
 }
