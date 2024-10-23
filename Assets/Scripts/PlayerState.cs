@@ -6,11 +6,13 @@ public abstract class PlayerState   //모든 플레이어 상태의 기본이 되는 추상 클래
 {
     protected PlayerStateMachine stateMachine;          //상태 머신에 대한 참조 
     protected PlayerController playerController;        //플레이어 컨트롤러에 대한 참조
+    protected PlayerAnimationManager animationManager;
 
     public PlayerState(PlayerStateMachine stateMachine) //상태 머신과 플레이어 컨트롤러 참조 초기화 
     {
         this.stateMachine = stateMachine;
         this.playerController = stateMachine.playerController;
+        this.animationManager = stateMachine.GetComponent<PlayerAnimationManager>();
     }
 
     //가상 메서드 들 : 하위 클래스에서 필요에 따라 오버라이드 
@@ -68,10 +70,13 @@ public class IdleState : PlayerState
 //MoveingState : 플레이어가 이동 중인 상태 
 public class MoveingState : PlayerState
 {
+    private bool isRunning;
     public MoveingState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
     public override void Update()
     {
+        isRunning = Input.GetKey(KeyCode.LeftShift);
+
         CheckTransitions();                 //매 프레임 마다 상태 전환 조건 체크 
     }
 
