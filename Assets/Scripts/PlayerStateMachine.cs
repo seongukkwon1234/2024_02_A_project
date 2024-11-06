@@ -34,7 +34,7 @@ public class PlayerStateMachine : MonoBehaviour
     //TransitionToState 새로운 상태로 전환하는 메서드 
     public void TransitionToState(PlayerState newState)
     {
-        if(currentState? .GetType() == newState.GetType())
+        if(currentState? .GetType() != newState.GetType())
         {
             return;
         }
