@@ -34,10 +34,11 @@ public class PlayerStateMachine : MonoBehaviour
     //TransitionToState 새로운 상태로 전환하는 메서드 
     public void TransitionToState(PlayerState newState)
     {
-        if(currentState? .GetType() != newState.GetType())
+        if(currentState? .GetType() == newState.GetType())
         {
             return;
         }
+
         currentState?.Exit();                   //현재 상태가 존재한다면 [?] IF 문 처럼 쓰임 (상태 종료)
         currentState = newState;                //새로운 상태로 전환
         currentState.Enter();                   //상태 시작 

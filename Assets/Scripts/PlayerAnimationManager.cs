@@ -9,10 +9,16 @@ public class PlayerAnimationManager : MonoBehaviour
     public PlayerStateMachine stateMachine;
 
     private const string PARAM_IS_MOVING = "IsMoving";
-    private const string PARAM_IS_RUNING = "IsRuning";
+    private const string PARAM_IS_RUNNING = "IsRunning";
     private const string PARAM_IS_JUMPING = "IsJumping";
-    private const string PARAM_IS_FALLING = "Isfalling";
+    private const string PARAM_IS_FALLING = "IsFalling";
     private const string PARAM_IS_ATTACK_TRIGGER = "Attack";
+
+
+    public void Update()
+    {
+        UpdateAnimationState();
+    }
 
     public void TriggerAttack()
     {
@@ -22,15 +28,11 @@ public class PlayerAnimationManager : MonoBehaviour
     private void ResetAllBoolParameters()
     {
         animator.SetBool(PARAM_IS_MOVING,false);
-        animator.SetBool(PARAM_IS_RUNING,false);
+        animator.SetBool(PARAM_IS_RUNNING,false);
         animator.SetBool(PARAM_IS_JUMPING,false);
         animator.SetBool(PARAM_IS_FALLING,false);
     }
 
-    public void Update()
-    {
-        UpdateAnimationState();
-    }
     private void UpdateAnimationState()
     {
         if(stateMachine.currentState != null)
@@ -47,7 +49,7 @@ public class PlayerAnimationManager : MonoBehaviour
 
                     if(Input.GetKey(KeyCode.LeftShift))
                     {
-                        animator.SetBool(PARAM_IS_RUNING, true);
+                        animator.SetBool(PARAM_IS_RUNNING, true);
                     }
                     break;
                 case JumpingState:
