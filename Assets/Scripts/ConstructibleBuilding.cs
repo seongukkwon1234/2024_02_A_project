@@ -57,13 +57,15 @@ public class ConstructibleBuilding : MonoBehaviour
             {
                 FloatingTextManager.instance.Show($"{buildingName} 건설 시작!", transform.position = Vector3.up);
             }
+
             StartCoroutine(ConstructionRoutine());
         }
         else
         {
             if(FloatingTextManager.instance != null)
             {
-                FloatingTextManager.instance.Show($"나무가 부족합니다 ! ({inventory.treeCount} / {requiredTree})", transform.position + Vector3.up);
+                FloatingTextManager.instance.Show(
+                    $"나무가 부족합니다 ! ({inventory.treeCount} / {requiredTree})", transform.position + Vector3.up);
             }
         }
     }
