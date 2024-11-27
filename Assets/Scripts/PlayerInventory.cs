@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-    private SurvivalState survivalStats; //클래스 선언
+    private SurvivalStats survivalStats; //클래스 선언
 
     public int crystalCount = 0;
     public int plantCount = 0;
@@ -13,7 +13,7 @@ public class PlayerInventory : MonoBehaviour
 
     public void Start()
     {
-        survivalStats = GetComponent<SurvivalState>();
+        survivalStats = GetComponent<SurvivalStats>();
     }
 
     public void UseItem(ItemType itemType)
